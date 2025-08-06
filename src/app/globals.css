@@ -1,26 +1,286 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --background-rgb: 250, 250, 250; /* Light gray background */
+  --foreground-rgb: 23, 23, 23; /* Dark gray text */
+  --primary-accent-rgb: 90, 70, 200; /* A distinct purple/blue */
+  --secondary-accent-rgb: 230, 230, 250; /* Light lavender for subtle backgrounds */
+  --border-rgb: 220, 220, 220; /* Light gray border */
+  --shadow-color: rgba(0, 0, 0, 0.05); /* Light shadow */
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background-rgb: 23, 23, 23; /* Dark background */
+    --foreground-rgb: 250, 250, 250; /* Light text */
+    --primary-accent-rgb: 150, 130, 255; /* Lighter purple/blue for dark mode */
+    --secondary-accent-rgb: 50, 50, 70; /* Darker lavender */
+    --border-rgb: 60, 60, 60; /* Darker border */
+    --shadow-color: rgba(0, 0, 0, 0.3); /* Darker shadow */
   }
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  color: rgb(var(--foreground-rgb));
+  background: rgb(var(--background-rgb));
+  font-family: 'Inter', sans-serif; /* Using a common modern sans-serif */
+  margin: 0;
+  padding: 0;
+  overflow: hidden; /* Hide body scrollbar as content will be handled by chat area */
+}
+
+/* Base styles for the main container */
+.app-container {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+}
+
+/* Sidebar/Header styles (Perplexity has a subtle left sidebar) */
+.sidebar {
+  width: 250px; /* Fixed width sidebar */
+  background: rgb(var(--secondary-accent-rgb));
+  border-right: 1px solid rgb(var(--border-rgb));
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* Push content top and bottom */
+  box-shadow: 2px 0 8px var(--shadow-color);
+  z-index: 10;
+}
+
+.sidebar-logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: rgb(var(--primary-accent-rgb));
+  margin-bottom: 30px;
+}
+
+.sidebar-nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar-nav li {
+  margin-bottom: 15px;
+}
+
+.sidebar-nav a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: rgb(var(--foreground-rgb));
+  text-decoration: none;
+  font-size: 1rem;
+  padding: 8px 10px;
+  border-radius: 8px;
+  transition: background-color 0.2s ease;
+}
+
+.sidebar-nav a:hover {
+  background-color: rgba(var(--primary-accent-rgb), 0.1);
+}
+
+/* Main content area for chat */
+.main-content {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+/* Message display area */
+.message-display {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding: 20px 40px; /* More horizontal padding for content */
+  -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Center content horizontally */
+}
+
+/* Wrapper to constrain message width */
+.message-wrapper {
+    max-width: 900px; /* Max width for chat bubbles */
+    width: 100%;
+}
+
+/* Input area */
+.input-area {
+  padding: 20px 40px;
+  background: rgb(var(--background-rgb));
+  border-top: 1px solid rgb(var(--border-rgb));
+  box-shadow: 0 -2px 8px var(--shadow-color);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative; /* For positioning the input bar centrally */
+  z-index: 20;
+}
+
+.input-container {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: 900px; /* Same max-width as messages */
+  border: 1px solid rgb(var(--border-rgb));
+  border-radius: 25px; /* Pill-shaped input */
+  padding: 10px 20px;
+  background-color: rgb(var(--background-rgb));
+  box-shadow: 0 4px 12px var(--shadow-color);
+  transition: all 0.3s ease;
+}
+
+.input-container:focus-within {
+  border-color: rgb(var(--primary-accent-rgb));
+  box-shadow: 0 4px 15px rgba(var(--primary-accent-rgb), 0.15);
+}
+
+.message-input {
+  flex-grow: 1;
+  border: none;
+  outline: none;
+  font-size: 1rem;
+  padding: 5px 0;
+  background: transparent;
+  color: rgb(var(--foreground-rgb));
+  resize: none; /* Disable textarea resize */
+  min-height: 24px; /* Ensure a minimum height for single line */
+  max-height: 150px; /* Limit height for multi-line input */
+  overflow-y: auto; /* Enable scroll if content exceeds max-height */
+}
+
+.send-button {
+  background-color: rgb(var(--primary-accent-rgb));
+  color: white;
+  border: none;
+  border-radius: 50%; /* Circular button */
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  margin-left: 15px;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+  box-shadow: 0 4px 8px rgba(var(--primary-accent-rgb), 0.3);
+}
+
+.send-button:hover {
+  background-color: rgba(var(--primary-accent-rgb), 0.9);
+  transform: translateY(-1px);
+}
+
+.send-button:active {
+  transform: translateY(1px);
+}
+
+/* Styling for individual chat messages */
+.message-bubble {
+  padding: 12px 18px;
+  border-radius: 18px;
+  margin-bottom: 15px;
+  max-width: 100%; /* Ensures it doesn't overflow */
+  word-wrap: break-word; /* Breaks long words */
+  line-height: 1.6;
+  font-size: 0.95rem;
+}
+
+.user-message {
+  background-color: rgb(var(--primary-accent-rgb));
+  color: white;
+  align-self: flex-end; /* Align to the right */
+  border-bottom-right-radius: 4px; /* Slightly different corner for visual distinction */
+}
+
+.bot-message {
+  background-color: rgb(var(--secondary-accent-rgb));
+  color: rgb(var(--foreground-rgb));
+  align-self: flex-start; /* Align to the left */
+  border-bottom-left-radius: 4px; /* Slightly different corner for visual distinction */
+  box-shadow: 0 2px 5px var(--shadow-color);
+}
+
+/* Markdown specific styles */
+.markdown-content pre {
+  background-color: rgba(var(--foreground-rgb), 0.05); /* Lighter code block background */
+  padding: 10px;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  font-family: 'Fira Code', 'JetBrains Mono', monospace; /* Monospaced font for code */
+  font-size: 0.9rem;
+}
+
+.markdown-content code {
+  background-color: rgba(var(--foreground-rgb), 0.1);
+  padding: 2px 5px;
+  border-radius: 4px;
+  font-family: 'Fira Code', 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+}
+
+.markdown-content h1, .markdown-content h2, .markdown-content h3 {
+  margin-top: 20px;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+.markdown-content p {
+  margin-bottom: 10px;
+}
+
+.markdown-content ul, .markdown-content ol {
+  margin-left: 20px;
+  margin-bottom: 10px;
+}
+
+/* Media queries for responsiveness */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 100%; /* Sidebar becomes full width on smaller screens */
+    height: auto; /* Auto height */
+    border-right: none;
+    border-bottom: 1px solid rgb(var(--border-rgb));
+    flex-direction: row; /* Horizontal layout for sidebar content */
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px 20px;
+  }
+
+  .sidebar-logo {
+    margin-bottom: 0;
+  }
+
+  .sidebar-nav {
+    display: none; /* Hide navigation on small screens, can be a hamburger menu */
+  }
+
+  .app-container {
+    flex-direction: column; /* Stack elements vertically */
+  }
+
+  .message-display, .input-area {
+    padding: 15px 20px; /* Reduced padding on smaller screens */
+  }
+
+  .input-container {
+    padding: 8px 15px; /* Smaller input padding */
+  }
+
+  .message-input {
+    font-size: 0.9rem;
+  }
+
+  .send-button {
+    width: 36px;
+    height: 36px;
+    margin-left: 10px;
+  }
 }
